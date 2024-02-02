@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "615952325172",
+    "project_id": "agriq-ea36e",
+    "storage_bucket": "agriq-ea36e.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:615952325172:android:e78315de4cd36009258861",
+        "android_client_info": {
+          "package_name": "com.agriq"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyA5lynKxsjag7bOpwWbVtbirQPopmS6cIs"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
