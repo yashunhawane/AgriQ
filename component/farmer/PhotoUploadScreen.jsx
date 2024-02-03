@@ -66,6 +66,7 @@ const PhotoUploadScreen = ({navigation}) => {
       await firestore().collection('Post').add({
         userId: currentUser.uid,
         description: description,
+        title: currentUser.displayName,
         soilType: soilType,
         pesticidesType: pesticidesType,
         imageUrl: imageUrlToStore,

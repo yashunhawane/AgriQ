@@ -35,6 +35,18 @@ const FarmerLogin = ({navigation}) => {
               routes: [{name: 'FarmerHome'}],
             }),
           );
+        })
+        .catch(error => {
+          if (
+            error.code === 'auth/user-not-found' ||
+            error.code === 'auth/wrong-password'
+          ) {
+            // Alert for wrong username or password
+            Alert.alert('Error', 'Invalid username or password');
+          } else {
+            // Handle other errors
+            Alert.alert('Error', error.message);
+          }
         });
     } catch (error) {
       Alert.alert('Error', error.message);

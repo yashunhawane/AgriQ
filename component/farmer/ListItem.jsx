@@ -1,69 +1,89 @@
 /* eslint-disable prettier/prettier */
-import React from 'react';
-import {View, Text, Image, StyleSheet} from 'react-native';
+import React, {useState, useEffect} from 'react';
+import {View, Text, Image, StyleSheet, ScrollView} from 'react-native';
 
-const data = [
-  {
-    id: '1',
-    imageSource: require('./leaf-1.jpg'),
-    title: 'Description about crop',
-    soilType: 'Type of soil-',
-    pesticides: 'Type pf pesticides-',
-  },
-  {
-    id: '2',
-    imageSource: require('./leaf-2.jpg'),
-    title: 'Description about crop',
-    soilType: 'Type of soil-',
-    pesticides: 'Type pf pesticides-',
-  },
-  {
-    id: '3',
-    imageSource: require('./leaf-2.jpg'),
-    title: 'Description about crop',
-    soilType: 'Type of soil-',
-    pesticides: 'Type pf pesticides-',
-  },
-  // Add more items as needed
-];
+import firestore from '@react-native-firebase/firestore';
+import auth from '@react-native-firebase/auth';
+import {SafeAreaView} from 'react-native-safe-area-context';
 
 const ListItem = () => {
+  //
+  const [postData, setPostData] = useState([]);
+  //
+  useEffect(() => {
+    const fetchData = async () => {
+      // Get the current user within the component
+      const currentUser = auth().currentUser;
+
+      if (currentUser) {
+        try {
+          const querySnapshot = await firestore()
+            .collection('Post')
+            .where('userId', '==', currentUser.uid)
+            .get();
+          const data = querySnapshot.docs.map(doc => ({
+            id: doc.id,
+            ...doc.data(),
+          }));
+          setPostData(data);
+        } catch (error) {
+          console.error('Error fetching data:', error);
+        }
+      }
+    };
+
+    fetchData();
+  }, []);
+
   return (
-    <>
-      {data.map(item => (
-        <View key={item.id} style={styles.container}>
-          <Image source={item.imageSource} style={styles.image} />
-          <Text style={styles.description}>{item.title}</Text>
-          <Text style={styles.description}>{item.soilType}</Text>
-          <Text style={styles.description}>{item.pesticides}</Text>
-        </View>
-      ))}
-    </>
+    <SafeAreaView>
+      <ScrollView contentContainerStyle={styles.scrollViewContent}>
+        {postData.map(item => (
+          <View style={styles.card} key={item.id}>
+            <Text style={styles.title}>{item.description}</Text>
+            <Image source={{uri: item.imageUrl}} style={styles.image} />
+            <Text style={styles.text}>Soil Type: {item.soilType}</Text>
+            <Text style={styles.text}>
+              Pesticides Type: {item.pesticidesType}
+            </Text>
+          </View>
+        ))}
+      </ScrollView>
+    </SafeAreaView>
   );
 };
 
 const styles = StyleSheet.create({
-  container: {
-    paddingHorizontal: 16,
-    paddingVertical: 5,
-    borderBottomWidth: 3, // Add a bottom border to each item
-    borderColor: 'gray', // Border color
-    margin: 20,
-  },
-  itemContainer: {
-    flexDirection: 'row', // Display items side by side
+  scrollViewContent: {
+    flexGrow: 1,
     alignItems: 'center',
+    paddingBottom: 20,
+  },
+  card: {
+    backgroundColor: 'white',
+    borderRadius: 10,
+    shadowColor: 'rgba(0, 0, 0, 0.1)',
+    shadowOffset: {width: 0, height: 2},
+    shadowOpacity: 0.8,
+    elevation: 5,
+    margin: 10,
+    padding: 10,
+    marginBottom: 20,
   },
   image: {
-    width: 70,
-    height: 70,
-    borderRadius: 40,
-    marginRight: 16,
+    width: 280,
+    height: 250,
+    marginBottom: 10,
   },
-  description: {
+  title: {
     fontSize: 18,
     fontWeight: 'bold',
+    marginBottom: 5,
+  },
+  text: {
+    fontSize: 18,
+    fontWeight: 'bold',
+    marginBottom: 10,
   },
 });
-
 export default ListItem;

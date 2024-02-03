@@ -14,6 +14,7 @@ import FarmerProfile from './component/farmer/FarmerProfile';
 import ExpertLogin from './component/expert/ExpertLogin';
 import ExpertRegistration from './component/expert/ExpertRegistration';
 import ExpertHome from './component/expert/ExpertHome';
+import PostDetail from './component/expert/PostDetail';
 
 const Stack = createNativeStackNavigator();
 
@@ -75,6 +76,11 @@ const App = () => {
           <Stack.Screen
             name="ExpertHome"
             component={ExpertHome}
+            options={{headerShown: false}}
+          />
+          <Stack.Screen
+            name="PostDetail"
+            component={PostDetail}
             options={{headerShown: false}}
           />
         </Stack.Navigator>

@@ -6,6 +6,7 @@ import {
   TouchableOpacity,
   Text,
   StyleSheet,
+  ScrollView,
 } from 'react-native';
 import ListItem from './ListItem';
 import Navbar from '../navBar/Navbar';
@@ -14,9 +15,13 @@ const FarmerHome = props => {
   return (
     <SafeAreaView>
       <Navbar navigation={props.navigation} />
-      <View>
-        <ListItem />
-      </View>
+      <ScrollView>
+        <SafeAreaView>
+          <View>
+            <ListItem />
+          </View>
+        </SafeAreaView>
+      </ScrollView>
       <View style={styles.container}>
         <TouchableOpacity
           style={styles.customButton}
