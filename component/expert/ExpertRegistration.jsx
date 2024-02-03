@@ -48,7 +48,7 @@ const ExpertRegistration = ({navigation}) => {
       .then(() => {
         console.log('User data saved successfully'); // Log success for debugging
         Alert.alert('Success', 'User registered successfully');
-        navigation.navigate('FarmerLogin');
+        navigation.navigate('ExpertLogin');
       })
       .catch(error => {
         let errorMessage = 'An error occurred. Please try again.';

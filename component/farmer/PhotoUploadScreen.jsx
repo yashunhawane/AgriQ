@@ -1,6 +1,5 @@
 /* eslint-disable prettier/prettier */
 import React, {useState} from 'react';
-import auth from '@react-native-firebase/auth';
 import {
   View,
   Text,
@@ -10,48 +9,46 @@ import {
   StyleSheet,
   Alert,
 } from 'react-native';
+import auth from '@react-native-firebase/auth';
 import firestore from '@react-native-firebase/firestore';
-import {launchImageLibrary} from 'react-native-image-picker';
 import storage from '@react-native-firebase/storage';
+import {launchImageLibrary} from 'react-native-image-picker';
 
 const PhotoUploadScreen = ({navigation}) => {
   const [description, setDescription] = useState('');
   const [soilType, setSoilType] = useState('');
   const [pesticidesType, setPesticidesType] = useState('');
   const [selectedImage, setSelectedImage] = useState(null);
-  const [imageData, setImageData] = useState();
-  const [imageUrl, setImageUrl] = useState();
+  // const [imageUrl, setImageUrl] = useState('');
 
   const selectImage = async () => {
     launchImageLibrary({}, response => {
       if (response.didCancel) {
-        console.log('User cancelled image picker');
+        // console.log('User cancelled image picker');
       } else if (response.error) {
         console.error('ImagePicker Error:', response.error);
+        // Handle error, e.g., show error message to user
       } else if (response.assets && response.assets.length > 0) {
         const imageUri = response.assets[0].uri;
         setSelectedImage(imageUri);
-        setImageData(response);
-        console.log('Selected Image URI:', imageUri);
+        // setImageData(response); // Not needed if you're not using it elsewhere
       }
     });
   };
 
-  // upload image
   const uploadImage = async () => {
     try {
-      const reference = storage().ref(imageData.assets[0].fileName);
-      const pathToFile = imageData.assets[0].uri;
-      await reference.putFile(pathToFile);
+      const reference = storage().ref(selectedImage.split('/').pop()); // Extract filename
+      await reference.putFile(selectedImage);
       const url = await reference.getDownloadURL();
-      setImageUrl(url);
+      console.log('Image uploaded successfully. URL:', url);
+      return url;
     } catch (error) {
       console.error('Error uploading image:', error);
-      // Handle error, e.g., show error message to user
+      throw error; // Re-throw the error for the caller to handle
     }
   };
 
-  // Function to handle the upload process
   const handleUpload = async () => {
     try {
       const currentUser = auth().currentUser;
@@ -61,15 +58,11 @@ const PhotoUploadScreen = ({navigation}) => {
         return;
       }
 
-      // Upload image only if selected
+      let imageUrlToStore = '';
       if (selectedImage) {
-        await uploadImage();
+        imageUrlToStore = await uploadImage();
       }
 
-      // Check if imageUrl is defined, use it if defined, otherwise set to null
-      const imageUrlToStore = imageUrl !== undefined ? imageUrl : null;
-
-      // Upload data to Firestore
       await firestore().collection('Post').add({
         userId: currentUser.uid,
         description: description,
@@ -84,8 +77,7 @@ const PhotoUploadScreen = ({navigation}) => {
       setSoilType('');
       setPesticidesType('');
       setSelectedImage(null);
-      setImageData(null);
-      setImageUrl(null);
+      // imageUrlToStore('');
 
       navigation.navigate('FarmerHome');
       Alert.alert('Success', 'Data uploaded successfully');
