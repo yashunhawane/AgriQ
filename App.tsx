@@ -15,6 +15,8 @@ import ExpertLogin from './component/expert/ExpertLogin';
 import ExpertRegistration from './component/expert/ExpertRegistration';
 import ExpertHome from './component/expert/ExpertHome';
 import PostDetail from './component/expert/PostDetail';
+import Chat from './component/chat/Chat';
+import FarmerMessage from './component/farmer/FarmerMessage';
 
 const Stack = createNativeStackNavigator();
 
@@ -81,6 +83,16 @@ const App = () => {
           <Stack.Screen
             name="PostDetail"
             component={PostDetail}
+            options={{headerShown: false}}
+          />
+          <Stack.Screen
+            name="Chat"
+            component={Chat}
+            options={{headerShown: false}}
+          />
+          <Stack.Screen
+            name="FarmerMessage"
+            component={FarmerMessage}
             options={{headerShown: false}}
           />
         </Stack.Navigator>

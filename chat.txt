@@ -1,0 +1,216 @@
+/* eslint-disable prettier/prettier */
+import React, {useState, useCallback, useEffect} from 'react';
+import {View, Text, StyleSheet} from 'react-native';
+import {GiftedChat, Bubble, InputToolbar, Send} from 'react-native-gifted-chat';
+import firestore from '@react-native-firebase/firestore';
+import {useRoute} from '@react-navigation/native';
+import {SafeAreaView} from 'react-native-safe-area-context';
+const Chat = () => {
+  const [messages, setMessages] = useState([]);
+  const [conversationId, setConversationId] = useState(null);
+  const route = useRoute();
+  const {farmerId, farmerName, expertId} = route.params.post;
+  console.log(farmerId, farmerName, expertId);
+
+  useEffect(() => {
+    let unsubscribe;
+
+    if (conversationId) {
+      unsubscribe = firestore()
+        .collection('chats')
+        .doc(conversationId)
+        .onSnapshot(doc => {
+          if (doc.exists) {
+            const firebaseData = doc.data();
+            const messagesData = firebaseData.messages || [];
+            // Convert Timestamp objects to JavaScript Date objects
+            const formattedMessages = messagesData.map(message => ({
+              ...message,
+              createdAt: message.createdAt.toDate(),
+            }));
+            setMessages(formattedMessages.reverse());
+          }
+        });
+    }
+
+    return () => {
+      if (unsubscribe) {
+        unsubscribe();
+      }
+    };
+  }, [conversationId]);
+
+  const onSend = useCallback(
+    (newMessages = []) => {
+      const updatedMessages = [...messages, ...newMessages];
+
+      let idToUse = farmerId; // Use farmerId as collection id
+
+      if (!idToUse) {
+        console.error("Farmer id doesn't exist");
+        return;
+      }
+
+      const messageData = updatedMessages.map(
+        ({_id, text, createdAt, user}) => ({
+          _id,
+          text,
+          createdAt,
+          user,
+          farmerId, // Include receiver's ID
+          farmerName, // Include receiver's name
+          expertId, // Include sender's ID
+        }),
+      );
+
+      const batch = firestore().batch();
+      const chatsRef = firestore().collection('chats').doc(idToUse);
+      setConversationId(idToUse);
+
+      batch.set(
+        chatsRef,
+        {messages: firestore.FieldValue.arrayUnion(...messageData)},
+        {merge: true},
+      );
+
+      batch
+        .commit()
+        .then(() => console.log('Messages added successfully'))
+        .catch(error => console.error('Error adding messages:', error));
+    },
+    [messages, farmerId, farmerName, expertId],
+  );
+
+  //
+  return (
+    <SafeAreaView style={styles.main}>
+      <GiftedChat
+        messages={messages}
+        onSend={newMessages => onSend(newMessages)}
+        user={{
+          _id: expertId,
+        }}
+        renderBubble={props => (
+          <Bubble
+            {...props}
+            wrapperStyle={{
+              right: styles.bubbleRight, // Apply custom styles
+              left: styles.bubbleLeft, // Apply custom styles
+            }}
+            textStyle={{
+              right: styles.textRight, // Apply custom styles
+              left: styles.textLeft, // Apply custom styles
+            }}
+          />
+        )}
+        renderInputToolbar={props => (
+          <InputToolbar
+            {...props}
+            containerStyle={styles.inputToolbarContainer} // Apply custom styles
+            primaryStyle={styles.inputToolbarPrimary} // Apply custom styles
+          />
+        )}
+        renderSend={props => (
+          <Send {...props}>
+            <View style={styles.sendButtonContainer}>
+              <Text style={styles.sendButtonText}>Send</Text>
+            </View>
+          </Send>
+        )}
+      />
+    </SafeAreaView>
+  );
+};
+
+const styles = StyleSheet.create({
+  bubbleRight: {
+    backgroundColor: 'gray', // Background color for messages sent by the current user
+  },
+  main: {
+    flex: 1,
+    margin: 5,
+    paddingBottom: 5,
+  },
+
+  bubbleLeft: {
+    backgroundColor: '#36454F', // Background color for messages sent by others
+  },
+  textRight: {
+    color: '#fff', // Text color for messages sent by the current user
+  },
+  textLeft: {
+    color: '#000', // Text color for messages sent by others
+  },
+  inputToolbarContainer: {
+    backgroundColor: '#fff', // Background color of the input toolbar
+  },
+  inputToolbarPrimary: {
+    color: '#333', // Text color of the input text
+  },
+  sendButtonContainer: {
+    marginRight: 10,
+    marginBottom: 5,
+  },
+  sendButtonText: {
+    color: '#007AFF',
+    fontSize: 20,
+    fontWeight: 'bold', // Text color of the send button
+  },
+});
+export default Chat;
+
+// const onSend = useCallback(
+//   (newMessages = []) => {
+//     const updatedMessages = [...messages, ...newMessages];
+
+//     let idToUse = conversationId;
+
+//     if (!idToUse) {
+//       idToUse = firestore().collection('chats').doc().id;
+//       setConversationId(idToUse);
+//     }
+
+//     firestore()
+//       .collection('chats')
+//       .doc(idToUse)
+//       .set({messages: updatedMessages});
+//   },
+//   [conversationId, messages],
+// );
+
+// const onSend = useCallback(
+//   (newMessages = []) => {
+//     const updatedMessages = [...messages, ...newMessages];
+
+//     let idToUse = conversationId;
+
+//     if (!idToUse) {
+//       idToUse = firestore().collection('chats').doc().id;
+//       setConversationId(idToUse);
+//     }
+
+//     const messageData = updatedMessages.map(
+//       ({_id, text, createdAt, user}) => ({
+//         _id,
+//         text,
+//         createdAt,
+//         user,
+//         farmerId, // Include receiver's ID
+//         farmerName, // Include receiver's name
+//         expertId, // Include sender's ID
+//       }),
+//     );
+
+//     const batch = firestore().batch();
+//     const chatsRef = firestore().collection('chats').doc(idToUse);
+
+//     batch.set(chatsRef, {messages: messageData}, {merge: true});
+
+//     batch
+//       .commit()
+//       .then(() => console.log('Messages added successfully'))
+//       .catch(error => console.error('Error adding messages:', error));
+//   },
+//   [conversationId, messages, farmerId, farmerName, expertId],
+// );
+//

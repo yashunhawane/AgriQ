@@ -22,6 +22,8 @@ const ExpertHome = props => {
         imageUrl: detail.imageUrl,
         pesticidesType: detail.pesticidesType,
         soilType: detail.soilType,
+        userId: detail.userId,
+        title: detail.title,
       },
     });
   };

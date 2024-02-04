@@ -17,15 +17,19 @@ const ListItem = () => {
 
       if (currentUser) {
         try {
-          const querySnapshot = await firestore()
+          const unsubscribe = firestore()
             .collection('Post')
             .where('userId', '==', currentUser.uid)
-            .get();
-          const data = querySnapshot.docs.map(doc => ({
-            id: doc.id,
-            ...doc.data(),
-          }));
-          setPostData(data);
+            .onSnapshot(querySnapshot => {
+              const data = querySnapshot.docs.map(doc => ({
+                id: doc.id,
+                ...doc.data(),
+              }));
+              setPostData(data);
+            });
+
+          // Return a cleanup function to unsubscribe from the snapshot listener
+          return () => unsubscribe();
         } catch (error) {
           console.error('Error fetching data:', error);
         }

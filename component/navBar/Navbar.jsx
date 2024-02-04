@@ -16,7 +16,9 @@ const Navbar = ({navigation}) => {
           <Text style={styles.middleText}>News Updates</Text>
         </TouchableOpacity>
       </View>
-      <TouchableOpacity style={styles.icon}>
+      <TouchableOpacity
+        style={styles.icon}
+        onPress={() => navigation.navigate('FarmerMessage')}>
         <Icon name="envelope" size={32} color="black" />
       </TouchableOpacity>
     </View>

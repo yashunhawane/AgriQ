@@ -1,11 +1,25 @@
 /* eslint-disable prettier/prettier */
 import React from 'react';
 import {useRoute} from '@react-navigation/native';
-import {View, Text, Image, StyleSheet} from 'react-native';
+import {View, Text, Image, StyleSheet, Button} from 'react-native';
+import auth from '@react-native-firebase/auth';
 
-const PostDetail = () => {
+const PostDetail = props => {
   const route = useRoute();
+  //
+  const currentUser = auth().currentUser;
 
+  //
+  const gotoChat = () => {
+    props.navigation.navigate('Chat', {
+      post: {
+        farmerId: route.params.post.userId,
+        farmerName: route.params.post.title,
+        expertId: currentUser.uid,
+      },
+    });
+  };
+  //
   return (
     <>
       <View style={styles.card}>
@@ -18,6 +32,9 @@ const PostDetail = () => {
         <Text style={styles.text}>
           Pesticides Type: {route.params.post.pesticidesType}
         </Text>
+        <View style={styles.buttonContainer}>
+          <Button title="Message" onPress={gotoChat} color="#808080" />
+        </View>
       </View>
     </>
   );
@@ -34,10 +51,18 @@ const styles = StyleSheet.create({
     margin: 10,
     padding: 10,
   },
+  buttonContainer: {
+    marginVertical: 10,
+    marginHorizontal: 20,
+    padding: 10,
+    borderRadius: 5,
+    overflow: 'hidden',
+  },
   image: {
     width: 280,
     height: 250,
     marginBottom: 10,
+    marginLeft:10,
   },
   title: {
     fontSize: 18,
