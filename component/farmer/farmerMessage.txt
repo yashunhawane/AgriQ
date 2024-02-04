@@ -7,8 +7,6 @@ import auth from '@react-native-firebase/auth';
 const FarmerMessage = () => {
   const [chatData, setChatData] = useState([]);
 
-  const [expertId, setExpertId] = useState(null);
-
   useEffect(() => {
     const fetchData = async () => {
       // Get the current user within the component
@@ -18,34 +16,25 @@ const FarmerMessage = () => {
         try {
           const unsubscribe = firestore()
             .collection('chats')
+            .where('farmerId', '==', currentUser.uid) // Filter by farmerId
             .onSnapshot(async querySnapshot => {
               const data = [];
               for (const doc of querySnapshot.docs) {
                 const chatData = {
                   id: doc.id,
-                  lastMessage: null, // Initialize lastMessage to null
+                  messages: [],
                 };
 
-                // Fetch the last message from the 'messages' subcollection of the current chat document
+                // Fetch messages from the 'messages' subcollection of the current chat document
                 const messagesSnapshot = await doc.ref
                   .collection('messages')
-                  .orderBy('createdAt', 'desc') // Order by createdAt to get the last message
-                  .limit(1) // Limit to only one message (the last one)
                   .get();
+                const messagesData = messagesSnapshot.docs.map(messageDoc => ({
+                  id: messageDoc.id,
+                  ...messageDoc.data(),
+                }));
 
-                if (!messagesSnapshot.empty) {
-                  // If there's a last message, set it to chatData.lastMessage
-                  const lastMessageData = messagesSnapshot.docs[0].data();
-                  chatData.lastMessage = {
-                    id: messagesSnapshot.docs[0].id,
-                    ...lastMessageData,
-                  };
-                  // Set the expertId if it's not set already
-                  if (!expertId) {
-                    setExpertId(lastMessageData.expertId);
-                  }
-                }
-
+                chatData.messages = messagesData;
                 data.push(chatData);
               }
               setChatData(data);
@@ -60,7 +49,7 @@ const FarmerMessage = () => {
     };
 
     fetchData();
-  }, [expertId]);
+  }, []);
 
   return (
     <View style={styles.container}>
@@ -70,12 +59,12 @@ const FarmerMessage = () => {
       <View style={styles.messageList}>
         {chatData.map(chat => (
           <View key={chat.id} style={styles.message}>
-            {chat.lastMessage && (
-              <View>
+            {chat.messages.map(message => (
+              <View key={message._id}>
                 <Text style={styles.sender}>Expert</Text>
-                <Text style={styles.messageText}>{chat.lastMessage.text}</Text>
+                <Text style={styles.messageText}>{message.text}</Text>
               </View>
-            )}
+            ))}
           </View>
         ))}
       </View>

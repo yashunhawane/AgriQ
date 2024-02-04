@@ -17,6 +17,7 @@ import ExpertHome from './component/expert/ExpertHome';
 import PostDetail from './component/expert/PostDetail';
 import Chat from './component/chat/Chat';
 import FarmerMessage from './component/farmer/FarmerMessage';
+import FarmerChat from './component/farmer/FarmerChat';
 
 const Stack = createNativeStackNavigator();
 
@@ -93,6 +94,11 @@ const App = () => {
           <Stack.Screen
             name="FarmerMessage"
             component={FarmerMessage}
+            options={{headerShown: false}}
+          />
+          <Stack.Screen
+            name="FarmerChat"
+            component={FarmerChat}
             options={{headerShown: false}}
           />
         </Stack.Navigator>
