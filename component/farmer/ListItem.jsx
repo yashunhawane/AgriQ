@@ -1,6 +1,13 @@
 /* eslint-disable prettier/prettier */
 import React, {useState, useEffect} from 'react';
-import {View, Text, Image, StyleSheet, ScrollView} from 'react-native';
+import {
+  View,
+  Text,
+  Image,
+  StyleSheet,
+  ScrollView,
+  TouchableOpacity,
+} from 'react-native';
 
 import firestore from '@react-native-firebase/firestore';
 import auth from '@react-native-firebase/auth';
@@ -38,7 +45,15 @@ const ListItem = () => {
 
     fetchData();
   }, []);
-
+  //
+  const handleDeletePost = async postId => {
+    try {
+      await firestore().collection('Post').doc(postId).delete();
+    } catch (error) {
+      console.error('Error deleting post:', error);
+    }
+  };
+  //
   return (
     <SafeAreaView>
       <ScrollView contentContainerStyle={styles.scrollViewContent}>
@@ -50,6 +65,11 @@ const ListItem = () => {
             <Text style={styles.text}>
               Pesticides Type: {item.pesticidesType}
             </Text>
+            <TouchableOpacity
+              style={styles.deleteButton}
+              onPress={() => handleDeletePost(item.id)}>
+              <Text style={styles.deleteButtonText}>Delete Post</Text>
+            </TouchableOpacity>
           </View>
         ))}
       </ScrollView>
@@ -88,6 +108,18 @@ const styles = StyleSheet.create({
     fontSize: 18,
     fontWeight: 'bold',
     marginBottom: 10,
+  },
+  deleteButton: {
+    backgroundColor: '#dc143c',
+    borderRadius: 8,
+    paddingVertical: 8,
+    paddingHorizontal: 12,
+    marginTop: 10,
+  },
+  deleteButtonText: {
+    color: '#fff',
+    fontWeight: 'bold',
+    textAlign: 'center',
   },
 });
 export default ListItem;

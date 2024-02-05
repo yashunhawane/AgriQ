@@ -93,17 +93,14 @@ const FarmerMessage = props => {
               key={chat.id}
               style={styles.message}
               onPress={() => gotoChat(chat.id)}>
-              {' '}
-              {/* Pass chat.id to gotoChat */}
-              {chat.lastMessage && (
+              {chat.lastMessage ? (
                 <View>
                   <Text style={styles.sender}>Expert</Text>
                   <Text style={styles.messageText}>
                     {chat.lastMessage.text}
                   </Text>
                 </View>
-              )}
-              {!chat.lastMessage && (
+              ) : (
                 <Text style={styles.noMessageText}>No messages yet</Text>
               )}
             </TouchableOpacity>

@@ -21,7 +21,7 @@ const PostDetail = props => {
   return (
     <>
       <View style={styles.card}>
-        <Text style={styles.title}>{route.params.post.description}</Text>
+        <Text style={styles.title}>{route.params.post.title}</Text>
         <Image
           source={{uri: route.params.post.imageUrl}}
           style={styles.image}
@@ -30,6 +30,7 @@ const PostDetail = props => {
         <Text style={styles.text}>
           Pesticides Type: {route.params.post.pesticidesType}
         </Text>
+        <Text style={styles.description}>{route.params.post.description}</Text>
         <View style={styles.buttonContainer}>
           <Button title="Message" onPress={gotoChat} color="#808080" />
         </View>
@@ -63,13 +64,17 @@ const styles = StyleSheet.create({
     marginLeft: 10,
   },
   title: {
-    fontSize: 18,
+    fontSize: 20,
     fontWeight: 'bold',
     marginBottom: 5,
   },
   text: {
     fontSize: 18,
     fontWeight: 'bold',
+    marginBottom: 5,
+  },
+  description: {
+    fontSize: 18,
     marginBottom: 5,
   },
 });

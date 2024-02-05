@@ -19,6 +19,7 @@ import PostDetail from './component/expert/PostDetail';
 import Chat from './component/chat/Chat';
 import FarmerMessage from './component/farmer/FarmerMessage';
 import FarmerChat from './component/farmer/FarmerChat';
+import SplashScreen from './component/splash/SplashScreen';
 
 const Stack = createNativeStackNavigator();
 
@@ -26,12 +27,18 @@ const App = () => {
   return (
     <>
       <NavigationContainer>
-        <Stack.Navigator initialRouteName="Selection">
+        <Stack.Navigator initialRouteName="SplashScreen">
+          <Stack.Screen
+            name="SplashScreen"
+            component={SplashScreen}
+            options={{headerShown: false}}
+          />
           <Stack.Screen
             name="Selection"
             component={Selection}
             options={{headerShown: false}}
           />
+
           <Stack.Screen
             name="FarmerLogin"
             component={FarmerLogin}

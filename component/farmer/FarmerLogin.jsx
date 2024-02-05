@@ -17,6 +17,8 @@ import {
 const FarmerLogin = ({navigation}) => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+
+  //
   const handleEmailChange = text => {
     setEmail(text);
   };
@@ -24,32 +26,29 @@ const FarmerLogin = ({navigation}) => {
     setPassword(text);
   };
 
-  const handleLogin = () => {
+  const handleLogin = async () => {
     try {
-      auth()
-        .signInWithEmailAndPassword(email, password)
-        .then(() => {
-          navigation.dispatch(
-            CommonActions.reset({
-              index: 0,
-              routes: [{name: 'FarmerHome'}],
-            }),
-          );
-        })
-        .catch(error => {
-          if (
-            error.code === 'auth/user-not-found' ||
-            error.code === 'auth/wrong-password'
-          ) {
-            // Alert for wrong username or password
-            Alert.alert('Error', 'Invalid username or password');
-          } else {
-            // Handle other errors
-            Alert.alert('Error', error.message);
-          }
-        });
+      if (!email || !password) {
+        Alert.alert('Error', 'Please enter both email and password.');
+        return;
+      }
+
+      await auth().signInWithEmailAndPassword(email, password);
+
+      navigation.dispatch(
+        CommonActions.reset({
+          index: 0,
+          routes: [{name: 'FarmerHome'}],
+        }),
+      );
     } catch (error) {
-      Alert.alert('Error', error.message);
+      if (error.code === 'auth/user-not-found') {
+        Alert.alert('Error', 'User not found. Please check your email.');
+      } else if (error.code === 'auth/wrong-password') {
+        Alert.alert('Error', 'Incorrect password. Please try again.');
+      } else {
+        Alert.alert('Error', error.message);
+      }
     }
   };
   //

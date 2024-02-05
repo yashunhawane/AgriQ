@@ -60,7 +60,7 @@ const ExpertHome = props => {
         {postData.map(item => (
           <TouchableOpacity onPress={() => gotoPost(item)}>
             <View style={styles.card} key={item.id}>
-              <Text style={styles.title}>{item.description}</Text>
+              <Text style={styles.title}>{item.title}</Text>
               <Image source={{uri: item.imageUrl}} style={styles.image} />
               <Text style={styles.text}>Soil Type: {item.soilType}</Text>
               <Text style={styles.text}>

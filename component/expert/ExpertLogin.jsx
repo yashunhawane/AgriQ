@@ -11,7 +11,7 @@ import {
   Button,
   StyleSheet,
   Alert,
-  TouchableOpacity,
+  // TouchableOpacity,
 } from 'react-native';
 
 const ExpertLogin = ({navigation}) => {
@@ -25,6 +25,11 @@ const ExpertLogin = ({navigation}) => {
   };
 
   const handleLogin = () => {
+    if (!email || !password) {
+      Alert.alert('Error', 'Please enter both email and password.');
+      return;
+    }
+
     try {
       auth()
         .signInWithEmailAndPassword(email, password)
@@ -35,6 +40,9 @@ const ExpertLogin = ({navigation}) => {
               routes: [{name: 'ExpertHome'}],
             }),
           );
+        })
+        .catch(error => {
+          Alert.alert('Error', error.message);
         });
     } catch (error) {
       Alert.alert('Error', error.message);
@@ -70,13 +78,6 @@ const ExpertLogin = ({navigation}) => {
       <View style={styles.section}>
         <Text style={styles.forgotPassword}>Forgot your password?</Text>
       </View>
-
-      <TouchableOpacity
-        onPress={() => navigation.navigate('ExpertRegistration')}>
-        <View>
-          <Text style={styles.register}>Don't have an account? Register</Text>
-        </View>
-      </TouchableOpacity>
     </SafeAreaView>
   );
 };
@@ -122,3 +123,10 @@ const styles = StyleSheet.create({
 });
 
 export default ExpertLogin;
+
+//<TouchableOpacity
+//      onPress={() => navigation.navigate('ExpertRegistration')}>
+//    <View>
+//    <Text style={styles.register}>Don't have an account? Register</Text>
+//</View>
+//</TouchableOpacity>

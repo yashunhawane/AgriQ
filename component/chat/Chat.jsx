@@ -171,6 +171,10 @@ const Chat = () => {
             </View>
           </Send>
         )}
+        timeTextStyle={{
+          left: styles.timeTextLeft,
+          right: styles.timeTextRight,
+        }}
       />
     </SafeAreaView>
   );
@@ -182,16 +186,18 @@ const styles = StyleSheet.create({
     backgroundColor: '#fff',
   },
   bubbleRight: {
-    backgroundColor: 'gray',
+    backgroundColor: '#A9A9A9',
+    marginRight:5,
   },
   bubbleLeft: {
-    backgroundColor: '#36454F',
+    backgroundColor: '#E5E4E2',
+    marginLeft: -30,
   },
   textRight: {
     color: '#fff',
   },
   textLeft: {
-    color: '#000',
+    color: '#36454F',
   },
   inputToolbarContainer: {
     backgroundColor: '#fff',
@@ -207,6 +213,12 @@ const styles = StyleSheet.create({
     color: '#007AFF',
     fontSize: 20,
     fontWeight: 'bold',
+  },
+  timeTextLeft: {
+    color: '#000', // Black color
+  },
+  timeTextRight: {
+    color: '#000', // Black color
   },
 });
 
