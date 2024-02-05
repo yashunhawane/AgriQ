@@ -1,9 +1,29 @@
 /* eslint-disable prettier/prettier */
-import React from 'react';
+import React, {useState, useEffect} from 'react';
 import {View, TouchableOpacity, Text, StyleSheet} from 'react-native';
 import Icon from 'react-native-vector-icons/FontAwesome';
+import auth from '@react-native-firebase/auth';
 
 const Navbar = ({navigation}) => {
+  const currentUser = auth().currentUser;
+  const [userType, setUserType] = useState('');
+
+  useEffect(() => {
+    if (currentUser) {
+      // Check the display name to determine the user type
+      const displayName = currentUser.displayName;
+      setUserType(displayName === 'Expert' ? 'Expert' : 'Farmer');
+    }
+  }, [currentUser]);
+
+  const handlePress = () => {
+    if (userType === 'Expert') {
+      navigation.navigate('Messages');
+    } else {
+      navigation.navigate('FarmerMessage');
+    }
+  };
+
   return (
     <View style={styles.container}>
       <TouchableOpacity
@@ -16,9 +36,7 @@ const Navbar = ({navigation}) => {
           <Text style={styles.middleText}>News Updates</Text>
         </TouchableOpacity>
       </View>
-      <TouchableOpacity
-        style={styles.icon}
-        onPress={() => navigation.navigate('FarmerMessage')}>
+      <TouchableOpacity style={styles.icon} onPress={handlePress}>
         <Icon name="envelope" size={32} color="black" />
       </TouchableOpacity>
     </View>

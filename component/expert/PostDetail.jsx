@@ -2,12 +2,10 @@
 import React from 'react';
 import {useRoute} from '@react-navigation/native';
 import {View, Text, Image, StyleSheet, Button} from 'react-native';
-import auth from '@react-native-firebase/auth';
 
 const PostDetail = props => {
   const route = useRoute();
   //
-  const currentUser = auth().currentUser;
 
   //
   const gotoChat = () => {
@@ -15,7 +13,7 @@ const PostDetail = props => {
       post: {
         farmerId: route.params.post.userId,
         farmerName: route.params.post.title,
-        expertId: currentUser.uid,
+        expertId: route.params.post.expertId,
       },
     });
   };
@@ -62,7 +60,7 @@ const styles = StyleSheet.create({
     width: 280,
     height: 250,
     marginBottom: 10,
-    marginLeft:10,
+    marginLeft: 10,
   },
   title: {
     fontSize: 18,

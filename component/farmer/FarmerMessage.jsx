@@ -8,6 +8,7 @@ const FarmerMessage = props => {
   const [chatData, setChatData] = useState([]);
   const [farmerId, setFarmerId] = useState(null);
   const [expertId, setExpertId] = useState(null);
+  const [farmerName, setFarmerName] = useState(null);
 
   //
   const gotoChat = () => {
@@ -15,6 +16,7 @@ const FarmerMessage = props => {
       post: {
         farmerId,
         expertId,
+        farmerName,
       },
     });
   };
@@ -27,6 +29,7 @@ const FarmerMessage = props => {
 
       if (currentUser) {
         setFarmerId(currentUser.uid);
+        setFarmerName(currentUser.displayName);
 
         try {
           const unsubscribe = firestore()
@@ -80,21 +83,32 @@ const FarmerMessage = props => {
     <View style={styles.container}>
       <Text style={styles.title}>Messages</Text>
       {/* Render chat messages */}
-
+      {console.log(chatData)}
       <View style={styles.messageList}>
-        {chatData.map(chat => (
-          <TouchableOpacity
-            key={chat.id}
-            style={styles.message}
-            onPress={() => gotoChat(chat.id)}>
-            {chat.lastMessage && (
-              <View>
-                <Text style={styles.sender}>Expert</Text>
-                <Text style={styles.messageText}>{chat.lastMessage.text}</Text>
-              </View>
-            )}
-          </TouchableOpacity>
-        ))}
+        {chatData.length === 0 ? (
+          <Text style={styles.noMessageText}>No messages yet</Text>
+        ) : (
+          chatData.map(chat => (
+            <TouchableOpacity
+              key={chat.id}
+              style={styles.message}
+              onPress={() => gotoChat(chat.id)}>
+              {' '}
+              {/* Pass chat.id to gotoChat */}
+              {chat.lastMessage && (
+                <View>
+                  <Text style={styles.sender}>Expert</Text>
+                  <Text style={styles.messageText}>
+                    {chat.lastMessage.text}
+                  </Text>
+                </View>
+              )}
+              {!chat.lastMessage && (
+                <Text style={styles.noMessageText}>No messages yet</Text>
+              )}
+            </TouchableOpacity>
+          ))
+        )}
       </View>
     </View>
   );
@@ -127,6 +141,12 @@ const styles = StyleSheet.create({
   },
   messageText: {
     fontSize: 16,
+  },
+  noMessageText: {
+    fontStyle: 'italic',
+    color: '#666',
+    fontSize: 24,
+    fontWeight: 'bold',
   },
 });
 

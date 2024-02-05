@@ -8,7 +8,8 @@ import firestore from '@react-native-firebase/firestore';
 
 const Chat = () => {
   const route = useRoute();
-  const {farmerId, expertId} = route.params.post;
+  const {farmerId, expertId, farmerName} = route.params.post;
+  console.log(farmerId, farmerName, expertId);
 
   const [messages, setMessages] = useState([]);
   const [conversationId, setConversationId] = useState(null);
@@ -111,6 +112,7 @@ const Chat = () => {
           text,
           createdAt,
           user,
+          farmerName,
           farmerId,
           expertId,
         }));

@@ -9,11 +9,14 @@ import {
 } from 'react-native';
 import React, {useEffect, useState} from 'react';
 import Navbar from '../navBar/Navbar';
+import auth from '@react-native-firebase/auth';
 
 import firestore from '@react-native-firebase/firestore';
 
 const ExpertHome = props => {
   const [postData, setPostData] = useState([]);
+
+  const currentUser = auth().currentUser.uid;
 
   const gotoPost = detail => {
     props.navigation.navigate('PostDetail', {
@@ -24,13 +27,17 @@ const ExpertHome = props => {
         soilType: detail.soilType,
         userId: detail.userId,
         title: detail.title,
+        expertId: currentUser,
       },
     });
   };
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const querySnapshot = await firestore().collection('Post').get();
+        const querySnapshot = await firestore()
+          .collection('Post')
+          .orderBy('createdAt', 'desc')
+          .get();
         const data = querySnapshot.docs.map(doc => ({
           id: doc.id,
           ...doc.data(),
@@ -38,6 +45,8 @@ const ExpertHome = props => {
         setPostData(data);
       } catch (error) {
         console.error('Error fetching data:', error);
+        // You can set an error state here if needed
+        // setError(error);
       }
     };
 

@@ -1,13 +1,23 @@
 /* eslint-disable prettier/prettier */
 import React, {useState, useEffect} from 'react';
-import {View, Text, StyleSheet} from 'react-native';
+import {View, Text, StyleSheet, TouchableOpacity} from 'react-native';
 import firestore from '@react-native-firebase/firestore';
 import auth from '@react-native-firebase/auth';
 
-const FarmerMessage = () => {
+const Messages = props => {
   const [chatData, setChatData] = useState([]);
 
-  const [expertId, setExpertId] = useState(null);
+  //
+  const gotoChat = data => {
+    props.navigation.navigate('Chat', {
+      post: {
+        farmerId: data.farmerId,
+        expertId: data.expertId,
+        farmerName: data.farmerName,
+      },
+    });
+  };
+  //
 
   useEffect(() => {
     const fetchData = async () => {
@@ -40,10 +50,6 @@ const FarmerMessage = () => {
                     id: messagesSnapshot.docs[0].id,
                     ...lastMessageData,
                   };
-                  // Set the expertId if it's not set already
-                  if (!expertId) {
-                    setExpertId(lastMessageData.expertId);
-                  }
                 }
 
                 data.push(chatData);
@@ -60,7 +66,7 @@ const FarmerMessage = () => {
     };
 
     fetchData();
-  }, [expertId]);
+  }, []); // Removed expertId from the dependency array
 
   return (
     <View style={styles.container}>
@@ -69,14 +75,21 @@ const FarmerMessage = () => {
 
       <View style={styles.messageList}>
         {chatData.map(chat => (
-          <View key={chat.id} style={styles.message}>
-            {chat.lastMessage && (
-              <View>
-                <Text style={styles.sender}>Expert</Text>
-                <Text style={styles.messageText}>{chat.lastMessage.text}</Text>
-              </View>
-            )}
-          </View>
+          <TouchableOpacity onPress={() => gotoChat(chat.lastMessage)}>
+            {console.log(chat.lastMessage)}
+            <View key={chat.id} style={styles.message}>
+              {chat.lastMessage && (
+                <View>
+                  <Text style={styles.sender}>
+                    {chat.lastMessage.farmerName}
+                  </Text>
+                  <Text style={styles.messageText}>
+                    {chat.lastMessage.text}
+                  </Text>
+                </View>
+              )}
+            </View>
+          </TouchableOpacity>
         ))}
       </View>
     </View>
@@ -113,4 +126,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default FarmerMessage;
+export default Messages;

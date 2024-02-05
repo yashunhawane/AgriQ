@@ -1,5 +1,6 @@
 // import {View, Text} from 'react-native';
 import React from 'react';
+import Messages from './component/chat/Messages';
 import {createNativeStackNavigator} from '@react-navigation/native-stack';
 import {NavigationContainer} from '@react-navigation/native';
 
@@ -101,10 +102,13 @@ const App = () => {
             component={FarmerChat}
             options={{headerShown: false}}
           />
+          <Stack.Screen
+            name="Messages"
+            component={Messages}
+            options={{headerShown: false}}
+          />
         </Stack.Navigator>
       </NavigationContainer>
-
-      {/* <News /> */}
     </>
   );
 };
